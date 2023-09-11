@@ -47,7 +47,8 @@ def randChislo():
             print('Ты ввел не число попытайся еще!')
 
 def twentQuestion():
-    pass
+    print('Игра на стадии реализации!')
+
 
 print('Привет!')
 name = input('Как тебя зовут?(Введи имя) ')
