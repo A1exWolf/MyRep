@@ -1,78 +1,69 @@
 # Создайте таймер, который будет измерять 25 минут работы и 5 минут отдыха, с
 # возможностью установить количество циклов. Применяйте GUI
 import tkinter as tk
-import time
+from tkinter import messagebox
+from ttkbootstrap import ttk, Style
 
-# Создаем главное окно
-app = tk.Tk()
-app.title("Помидоро Таймер")
-app.geometry("200x200")
+# Set the default time for work and break intervals
+WORK_TIME = 25 * 60
+SHORT_BREAK_TIME = 5 * 60
+LONG_BREAK_TIME = 15 * 60
 
-# Переменные для времени работы и отдыха (в секундах)
-work_time = 0
-break_time = 0
-current_time = 0
-cycles_completed = 0
-is_work_time = True  # Флаг для определения, работаем ли мы сейчас или отдыхаем
 
-# Функция для обновления таймера
-def update_timer():
-    global current_time, work_time, break_time, cycles_completed, is_work_time
+class PomodoroTimer:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.geometry("200x200")
+        self.root.title("Pomodoro Timer")
+        self.style = Style(theme="simplex")
+        self.style.theme_use()
 
-    if current_time > 0:
-        current_time -= 1
-        time_display.config(text=f"Осталось времени: {current_time // 60}:{current_time % 60}")
-        app.after(1000, update_timer)  # Вызываем эту функцию через 1 секунду
-    else:
-        if is_work_time:
-            cycles_completed += 1
-            cycles_label.config(text=f"Прошло циклов: {cycles_completed}")
-            is_work_time = False
-            current_time = break_time
-            time_display.config(text=f"Отдых: {current_time // 60}:{current_time % 60}")
-        else:
-            is_work_time = True
-            current_time = work_time
-            time_display.config(text=f"Работа: {current_time // 60}:{current_time % 60}")
+        self.timer_label = tk.Label(self.root, text="", font=("TkDefaultFont", 40))
+        self.timer_label.pack(pady=20)
 
-# Функция для запуска таймера
-def start_timer():
-    global current_time, work_time, break_time, cycles_completed, is_work_time
-    work_time = float(work_entry.get()) * 60
-    break_time = float(break_entry.get()) * 60
-    current_time = work_time
-    cycles_label.config(text=f"Прошло циклов: {cycles_completed}")
-    is_work_time = True
-    update_timer()
+        self.start_button = ttk.Button(self.root, text="Start", command=self.start_timer)
+        self.start_button.pack(pady=5)
 
-# Функция для сброса таймера
-def reset_timer():
-    global current_time, work_time, break_time, is_work_time
-    current_time = 0
-    work_time = 0
-    break_time = 0
-    is_work_time = True
-    time_display.config(text="Осталось времени: 00:00")
+        self.stop_button = ttk.Button(self.root, text="Stop", command=self.stop_timer,
+                                      state=tk.DISABLED)
+        self.stop_button.pack(pady=5)
 
-# Создаем элементы управления
-time_display = tk.Label(app, text="Осталось времени: 00:00")
-work_label = tk.Label(app, text="Время работы (минут):")
-work_entry = tk.Entry(app)
-break_label = tk.Label(app, text="Время отдыха (минут):")
-break_entry = tk.Entry(app)
-start_button = tk.Button(app, text="Старт", command=start_timer)
-reset_button = tk.Button(app, text="Сброс", command=reset_timer)
-cycles_label = tk.Label(app, text=f"Прошло циклов: {cycles_completed}")
+        self.work_time, self.break_time = WORK_TIME, SHORT_BREAK_TIME
+        self.is_work_time, self.pomodoros_completed, self.is_running = True, 0, False
 
-# Размещаем элементы на форме
-time_display.pack()
-work_label.pack()
-work_entry.pack()
-break_label.pack()
-break_entry.pack()
-start_button.pack()
-reset_button.pack()
-cycles_label.pack()
+        self.root.mainloop()
 
-# Запускаем приложение
-app.mainloop()
+    def start_timer(self):
+        self.start_button.config(state=tk.DISABLED)
+        self.stop_button.config(state=tk.NORMAL)
+        self.is_running = True
+        self.update_timer()
+
+    def stop_timer(self):
+        self.start_button.config(state=tk.NORMAL)
+        self.stop_button.config(state=tk.DISABLED)
+        self.is_running = False
+
+    def update_timer(self):
+        if self.is_running:
+            if self.is_work_time:
+                self.work_time -= 1
+                if self.work_time == 0:
+                    self.is_work_time = False
+                    self.pomodoros_completed += 1
+                    self.break_time = LONG_BREAK_TIME if self.pomodoros_completed % 4 == 0 else SHORT_BREAK_TIME
+                    messagebox.showinfo("Great job!" if self.pomodoros_completed % 4 == 0
+                                        else "Good job!", "Take a long break and rest your mind."
+                                        if self.pomodoros_completed % 4 == 0
+                                        else "Take a short break and strech your legs!")
+            else:
+                self.break_time -= 1
+                if self.break_time == 0:
+                    self.is_work_time, self.work_time = True, WORK_TIME
+                    messagebox.showinfo("Work TIie", "Get back to work!")
+            minutes, seconds = divmod(self.work_time if self.is_work_time else self.break_time, 60)
+            self.timer_label.config(text="{:02d}:{:02d}".format(minutes, seconds))
+            self.root.after(1000, self.update_timer)
+
+
+PomodoroTimer()
