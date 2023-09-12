@@ -1,12 +1,15 @@
-#Создайте программу, которая будет запрашивать данные о текущей погоде в
-#заданном городе через открытый API и выводить их на экран.
+# Создайте программу, которая будет запрашивать данные о текущей погоде в
+# заданном городе через открытый API и выводить их на экран.
 
 import requests
 import json
 
-cituName = input('Введите город (пример Липецк): ')
+cityName = input("Введите город (пример Липецк): ")
 
-api_url = f'https://api.weatherapi.com/v1/current.json?key=f9041ec3e97e4629a9c124428231109&q={cituName}&aqi=no'
+api_key = "f9041ec3e97e4629a9c124428231109"
+api_url = (
+    f"https://api.weatherapi.com/v1/current.json?key={api_key}&q={cityName}&aqi=no"
+)
 response = requests.get(api_url)
 
 if response.status_code == 200:
