@@ -1,47 +1,69 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script>
+export default {
+  data() {
+    return {
+      city: ""
+    }
+  }
+}
 </script>
-
+<!-- Вместо v-on: можно ставить знак @ -->
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <div class="wrapper">
+    <h1>Погодное приложение</h1>
+    <p>Узнать погоду в вашем городе {{city}}</p>
+    <input type="text" v-on:input="this.city = $event.target.value" placeholder="Введите город">
+    <button>Получить погоду</button>
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
+.wrapper {
+  width: 900px;
+  height: 500px;
+  border-radius: 50px;
+  padding: 20px;
+  background: #1f0f24;
+  text-align: center;
+  color: white;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.wrapper h1 {
+  margin-top: 50px;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+.wrapper p {
+  margin-top: 20px;
+  font-size: 18px;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+.wrapper input {
+  margin-top: 30px;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid #110813;
+  color: #fcfcfc;
+  font-size: 16px;
+  padding: 5px 8px;
+  outline: none;
+}
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.wrapper input:focus {
+  border-bottom-color: #6e2d7d;
+}
+
+.wrapper button {
+  background: #e3bc4b;
+  color: #fff;
+  border-radius: 10px;
+  border: 2px solid #b99935;
+  padding: 10px 15px;
+  margin-left: 20px;
+  cursor: pointer;
+  transition: transform 500ms ease;
+}
+
+.wrapper button:hover {
+  transform: scale(1.1) translateY(-5px);
 }
 </style>
