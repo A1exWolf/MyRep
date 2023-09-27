@@ -2,22 +2,48 @@
 export default {
   data() {
     return {
-      city: ""
+      city: "",
+      error: ''
+    }
+  },
+  computed: {
+    cityName () {
+      return "'" + this.city + "'"
+    }
+  },
+  methods: {
+    getWeather(){
+        if(this.city.trim().length < 2) {
+          this.error = "Нужно название более одного символа :)"
+          return false
+        }
+
+        this.error = ''
     }
   }
 }
 </script>
-<!-- Вместо v-on: можно ставить знак @ -->
+<!-- Вместо v-on: можно ставить знак @ , а так же аналог v-model="переменная" тут все время при вводе будет устанавиватся значение в переменную-->
 <template>
   <div class="wrapper">
     <h1>Погодное приложение</h1>
-    <p>Узнать погоду в вашем городе {{city}}</p>
-    <input type="text" v-on:input="this.city = $event.target.value" placeholder="Введите город">
-    <button>Получить погоду</button>
+    <p>Узнать погоду в {{city == "" ? 'вашем городе' : cityName}}</p>
+    <input type="text" v-model="city" placeholder="Введите город">
+<!-- v-show="условие" прописывем при каком условие должно показыватся или нет-->
+<!-- v-if or v-else аналог v-show но чуть видоизмененный-->
+<!--    <button v-show="city != '' ? true : false">Получить погоду</button>-->
+    <button v-if="city != ''" @click="getWeather()">Получить погоду</button>
+    <button v-else disabled>Введите название города</button>
+    <p class="error">{{this.error}}</p>
+    
   </div>
 </template>
 
 <style scoped>
+
+.error {
+  color: #d03939;
+}
 .wrapper {
   width: 900px;
   height: 500px;
@@ -50,6 +76,11 @@ export default {
 
 .wrapper input:focus {
   border-bottom-color: #6e2d7d;
+}
+
+.wrapper button:disabled {
+  background: #7e5e1d;
+  cursor: not-allowed;
 }
 
 .wrapper button {
