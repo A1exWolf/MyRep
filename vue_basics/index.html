@@ -10,13 +10,39 @@
 
 <div class="container" id="app">
     <div class="card">
-        <h1>{{title}}</h1>
+<!--        Динамичное изменение стиля -->
+        <h1 :style="{
+        color: inputValue.length <= 5 ? 'darkred' : 'darkblue',
+        fontSize: inputValue.length <= 6 ? '2rem' : '1.5rem'
+        }">{{title}}</h1>
 <div class="form-control">
 <!--    Если хочешь задать атрибуты через vue то нужно использовать v-bing-->
-    <input type="text" v-bind:placeholder="placeholderString">
+<!--    v-model позволяет сразу записывать значение в переменную -->
+    <input
+            type="text"
+            :placeholder="placeholderString"
+            v-model="inputValue"
+            @keypress.enter="addNewNote"
+    >
+<!--    @keypress.кнопка - выполняет действие при нажатие указанную клавишу-->
 </div>
-        <button class="btn">Добавить</button>
+        <button class="btn" @click="addNewNote">Добавить</button>
         <hr>
+        <ul class="list" v-if="notes.length !== 0">
+<!--  Для вывода элементов массива используется v-for -->
+            <li class="list-item" v-for="(note, idx) in notes">
+<!--                <span :class="note.length > 5 ? 'primary' : 'bold'">({{idx+1}}) {{toUpperCase(note)}}</span>-->
+<!--                <span :class="{-->
+<!--                'primary' : true,-->
+<!--                'bold': note.length > 5-->
+<!--                }">({{idx+1}}) {{toUpperCase(note)}}</span>-->
+                <span :class="['bold', {'primary': note.length > 5}]">({{idx+1}}) {{toUpperCase(note)}}</span>
+                <button class="btn danger" @click="removeNote(idx, $event)">Удалить</button>
+            </li>
+            <hr>
+            <li><strong>Общее количество заметок: {{notes.length}}</strong> | Удвоенное: {{doubleCountComputed}}</li>
+        </ul>
+        <div v-else-if="notes.length === 0">Заметок пока нет. Добавьте первую!</div>
     </div>
 </div>
 
