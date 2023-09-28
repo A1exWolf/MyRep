@@ -8,5 +8,20 @@
 </head>
 <body>
 
+<div class="container" id="app">
+    <div class="card">
+        <h1>{{title}}</h1>
+<div class="form-control">
+<!--    Если хочешь задать атрибуты через vue то нужно использовать v-bing-->
+    <input type="text" v-bind:placeholder="placeholderString">
+</div>
+        <button class="btn">Добавить</button>
+        <hr>
+    </div>
+</div>
+
+
+<script src="https://unpkg.com/vue@next"></script>
+<script src="app.js"></script>
 </body>
 </html>
